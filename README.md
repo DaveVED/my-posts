@@ -5,3 +5,4 @@ This is a collection of my peronsal posts. I like to share things as I learn, as
 ## TODO
 
 - [ ] We shoudl ahve an action that adds the items to the feed.json and upadtes the time etc...
+- [ ] Figure out best way to use images. custom mdx? hrm..
