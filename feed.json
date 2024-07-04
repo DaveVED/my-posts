@@ -6,13 +6,5 @@
       "path": "next-js-cloudfront-analytics.mdx",
       "title": "Next.js CloudFront Analytics",
       "author": "Dave Dennis"
-    },
-    {
-      "excerpt": "I've been exploring Next.js recently and looking for ways to gather visitor analytics on my personal site davedennis.dev. While Next.js, developed by Vercel, suggests deploying to Vercel, which offers built-in observability features and the handy @vercel/analytics package, I chose to deploy on Amazon Web Services instead.",
-      "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/next-js-cloudfront-analytics/cloudfront-eample-logging-config.png",
-      "date": "2024-01-28",
-      "path": "next-js-cloudfront-analytics.mdx",
-      "title": "Next.js CloudFront Analytics",
-      "author": "Dave Dennis"
     }
   ]
