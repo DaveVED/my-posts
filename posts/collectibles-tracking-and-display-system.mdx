@@ -94,3 +94,165 @@ Both my sites need auth. For the blog for things like comments, likes, etc.. For
 - [Auth0 by Okta](https://auth0.com/) - For my AuthZ/AuthN, pretty simple setup.
 
 Auth0 does proivde there own framwork but I wnated to play around with NextAuth.
+
+## Bootstrapping a new app
+
+As noted we're going to be using the turbo monorepo, so I don't need to make a new GitHub project or anything. I simply need to bootstrap a new app in my current repo. I'm going to start pretty bare bones, so I'm not going to use their `npx` starter for now. Here is what I'm doing.
+
+### Step 1 - Create a `./apps/collectibles` directory.
+
+### Step 3 - Create the root files at `./apps/collectibles`:
+#### The `./tsconfig.json` file
+
+TypeScript configuration file. Which will extend our shared common config in our packages `"extends": "@repo/typescript-config/nextjs.json"`
+
+```json
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "next-env.d.ts",
+    "next.config.js",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}
+```
+
+#### The `./tailwind.config.ts` file.
+
+Tailwind CSS configuration file. For now we just define the conent, and nothing else, we'll expand on it as needed.
+```typescript
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: ["./src/**/*.{ts,tsx,mdx,md,js}"]
+};
+
+export default config;
+```
+
+#### The `./README.md`
+
+Project README file.
+
+#### `./postcss.config.js`
+PostCSS configuration file. Should be empty but you can update later
+
+```javascript
+// If you want to use other PostCSS plugins, see the following:
+// https://tailwindcss.com/docs/using-with-preprocessors
+
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+```
+
+#### The `./next.config.js` file.
+Next.js configuration file.
+
+#### The `./package.json` file.
+
+Project manifest file. Ensure the app runs on a port that is not taken. I am using 3001 as my other app is running on 3000.
+
+```json
+  "scripts": {
+    "dev": "next dev --turbo --port 3001",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+```
+
+#### The `./Dockerfile` file.
+
+Docker configuration file for containerizing the app.
+
+#### The `./.gitignore` file
+
+Git ignore file specifying which files to ignore in version control.
+
+#### The `./.eslintrc.js` file.
+
+ESLint configuration file. This uses the common configs from shared pacakge as well.
+
+```javascript
+/** @type {import("eslint").Linter.Config} */
+module.exports = {
+  root: true,
+  extends: ["@repo/eslint-config/next.js"],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: true,
+  },
+};
+```
+
+#### The `./.env.local` file.
+
+Environment variables file for local development.
+
+### Step 4 - Create `./apps/collectibles/styles`
+
+#### Create `./globals.css` file
+Global CSS styles. If using tailwind must have the required `@`
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+### Create `./src` directory
+
+#### Create the `layout.tsx` file
+This is a wrapper pretty much, in next they have the concept of layouts, it's a Layout component for the app. We will start simple, with just the clidren pretty much.
+```typescript
+import type { Metadata } from "next";
+import "../../styles/globals.css";
+
+export const metadata: Metadata = {
+  title: "Dave Dennis",
+  description: "Dave Dennis personal portfolio",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className="h-full w-full overflow-y-auto"> {children} </body>
+    </html>
+  );
+}
+```
+
+#### `page.tsx` file
+
+Main page component for the app. We will start with a hello world.
+
+```typescript
+export default function LandingPage() {
+  return (
+    <main>
+      Hello World
+    </main>
+  );
+}
+```
+
+#### The `./public` file
+      > Static files directory.
