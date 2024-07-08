@@ -8,7 +8,7 @@
     "date": "2024-08-07"
   },
   {
-    "excerpt": "Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published a decent example, but it has one main issue: it requires a lot of manual copy/paste to get going with your project, such as changing the project name in many places. Along with this, it's missing a few tools that I like, which would require merging a few of their examples.",
+    "excerpt": "Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published decent examples, but they are all over the place and the changesets example requires a lot of copy paste. I am going to create a cli tool to allow dynamic generation of these exmaples from a single blueprint.",
     "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-blueprint-starter/cover-iamge.jpg",
     "path": "turborepo-blueprint-starter.mdx",
     "title": "Turborepo bluleprint starter written Go and deployed to npm with a Node Wrapper",
