@@ -1,26 +1,9 @@
 [
     {
-        "excerpt": "xxx",
-        "coverIamge": "xxx",
-        "date": "xxx",
-        "path": "xxx",
-        "title": "Building a simple personal site (with blog and portfolio) using Next.js",
-        "author": "Dave Dennis"
-    },
-    {
-        "excerpt": "xxx",
-        "coverIamge": "xxx",
-        "date": "xxx",
-        "path": "xxx",
-        "title": "Adding a comprehensive collectibles tracking and display system to your personal site",
-        "author": "Dave Dennis"
-    },
-    {
-        "excerpt": "xxx",
-        "coverIamge": "xxx",
-        "date": "xxx",
-        "path": "xxx",
-        "title": "Creating npx command to templatize your turborepo + changesets project",
+        "excerpt": "I've gotten really into collectibles latley. Well I guess i've always been into them, but i'm not at a place were I can embrace the hobby. With this, i've faced one major probelm, which is, I don't really have a good way to 1. track my stuff outside my brain so it's hard to share without word of mouth, and 2. I don't really have a way to show others besides having them over. To tackle this, i'm going to build a simple tracking and display system (maybe oneday i'll add a bid system we'll see).",
+        "coverIamge": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/cloudfront-analytics-tracking-system/cloudfront-eample-logging-config.png",
+        "path": "collectibles-tracking-and-display-system.mdx",
+        "title": "A Collectibles Tracking and Display System in Next JS",
         "author": "Dave Dennis"
     }
 ]
