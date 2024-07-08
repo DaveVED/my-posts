@@ -34,22 +34,22 @@ There is a third problem regarding wanting to sell this stuff, but I'll tackle
 that later. Right now, I'm a collector, not a seller, and if you ask my wife, it
 will probably always be that way. I get attached to my items.
 
-## The Arcitecture
+## The Architecture
 
-There were a few key arcitecture questions I needed to answer before getting started.
+There were a few key architecture questions I needed to answer before getting started.
 
-### Where should this live (Domain)
+### Where Should This Live (Domain)
 
 I've been going back and forth with this, and there are only really two logical options for me here.
 
 1. I can just let it live under [davedennis.dev](https://davedennis.dev) and create a `collectibles` path.
 2. I can create a subdomain [collectibles.davedennis.dev](https://collectibles.davedennis.dev).
 
-For whatever reason i've decdied to go with option two and have it as a subdomain. I might turn this into a shopping card some day, which was the main driver here. I'd like to keep the logic isolated.
+For whatever reason, I've decided to go with option two and have it as a subdomain. I might turn this into a shopping cart someday, which was the main driver here. I'd like to keep the logic isolated.
 
-### Where should lthis live (github)
+### Where Should This Live (GitHub)
 
-My personal site [davedennis.dev](https://davedennis.dev) is setup with [turbo repo](https://turbo.build/) [*monorepo solution*](https://turbo.build/repo/docs#the-monorepo-solution) and I love it. If it was a net new domain i'd create a new repo for this, but since it's a subdomain i'm going to just add a new `app` to my monorepo. It'll look something like this.
+My personal site [davedennis.dev](https://davedennis.dev) is set up with [Turbo Repo](https://turbo.build/) [*monorepo solution*](https://turbo.build/repo/docs#the-monorepo-solution) and I love it. If it was a net new domain, I'd create a new repo for this, but since it's a subdomain, I'm going to just add a new `app` to my monorepo. It'll look something like this:
 
 ```bash
 ├── apps
@@ -71,6 +71,19 @@ My personal site [davedennis.dev](https://davedennis.dev) is setup with [turbo r
 └── turbo.json
 ```
 
-It's very straight forward, and it going to let me grow my  [davedennis.dev](https://davedennis.dev) domain as needed.
+It's very straightforward and it's going to let me grow my [davedennis.dev](https://davedennis.dev) domain as needed. And a direct [quote](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#specifying-packages-in-a-monorepo) for this setup from them. See here for more details.
 
-> They define the setup like such "We recommend starting with splitting your packages into apps/ for applications and services and packages/ for everything else, like libraries and tooling.". See [here](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#specifying-packages-in-a-monorepo) for more details.
+> We recommend starting with splitting your packages into apps/ for applications and services and packages/ for everything else, like libraries and tooling.
+
+### Where Should This Live (Hosting)
+
+The recommend way to deploy Next apps is via [Vercel](https://vercel.com/docs/deployments/overview) which makes sense as they created the framework. I on the other hand am an AWS guy, so I am just going to expand on my current architecture on AWS, for this. A high level diagram is as follows. I will note i'm sure vercel is great for hosting (granted i've read some horor stories about people getting surpoise bills but that's just the servless life), and I do think I shoudl give it a try, maybe for my next pet proejct (which I probalby wont finish - HA).
+
+![Collectibles Architecture](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/architecture.jpg)
+
+I'm going to also touch on a few things that you may be asking your self, to just clear the air, I won't make any other justifications, otherwise (it's my site, so who would care).
+
+- Yes, I thought about s3. I use to run on it, but I wanted server side redering, and i'll 100% need it for this. The CloudFront + s3 setup was always free so that was a win, but with this setup I am just really incuring the cost of the ALB it's not the great debt, and worth the cost for me. 
+- This diagram does not show networking it's high level.
+
+### Authentication
