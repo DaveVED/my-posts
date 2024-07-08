@@ -33,3 +33,44 @@ The two main problems I'm trying to solve can be outlined as follows:
 There is a third problem regarding wanting to sell this stuff, but I'll tackle
 that later. Right now, I'm a collector, not a seller, and if you ask my wife, it
 will probably always be that way. I get attached to my items.
+
+## The Arcitecture
+
+There were a few key arcitecture questions I needed to answer before getting started.
+
+### Where should this live (Domain)
+
+I've been going back and forth with this, and there are only really two logical options for me here.
+
+1. I can just let it live under [davedennis.dev](https://davedennis.dev) and create a `collectibles` path.
+2. I can create a subdomain [collectibles.davedennis.dev](https://collectibles.davedennis.dev).
+
+For whatever reason i've decdied to go with option two and have it as a subdomain. I might turn this into a shopping card some day, which was the main driver here. I'd like to keep the logic isolated.
+
+### Where should lthis live (github)
+
+My personal site [davedennis.dev](https://davedennis.dev) is setup with [turbo repo](https://turbo.build/) [*monorepo solution*](https://turbo.build/repo/docs#the-monorepo-solution) and I love it. If it was a net new domain i'd create a new repo for this, but since it's a subdomain i'm going to just add a new `app` to my monorepo. It'll look something like this.
+
+```bash
+├── apps
+│   └── web // This is my core davedennis.dev site.
+│       ├── ...
+│   └── collectibles // This is the new collectibles site.
+│       ├── ...
+├── package.json
+├── packages
+│   ├── eslint-config
+│   │   ├── ...
+│   ├── typescript-config
+│   │   ├── ...
+│   └── ui
+│       ├── ...
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── README.md
+└── turbo.json
+```
+
+It's very straight forward, and it going to let me grow my  [davedennis.dev](https://davedennis.dev) domain as needed.
+
+> They define the setup like such "We recommend starting with splitting your packages into apps/ for applications and services and packages/ for everything else, like libraries and tooling.". See [here](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#specifying-packages-in-a-monorepo) for more details.
