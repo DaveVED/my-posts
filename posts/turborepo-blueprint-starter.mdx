@@ -1,2 +1,16 @@
-# Test 
-me
+---
+title: 'Turborepo blueprint starter written in Go and deployed to npm with a Node Wrapper'
+author: 'Dave Dennis'
+date: '2024-08-07'
+coverImage: 'https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-blueprint-starter/cover-iamge.jpg'
+excerpt: >
+  Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published decent examples, but they are all over the place and the changesets example requires a lot of copy paste. I am going to create a cli tool to allow dynamic generation of these examples from a single blueprint.
+---
+
+Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published decent examples, but they are all over the place and the changesets example requires a lot of copy paste. I am going to create a cli tool to allow dynamic generation of these examples from a single blueprint.
+
+## A deeper look at the problem
+
+All of the turbo examples can be found on there [github](https://github.com/vercel/turbo/tree/main/examples), and as you'll see they have *great* examples and *a lot* of examples. But the way the examples were built achives one thing, for each example, and some of the examles require many interventaiton (for example the changeset one). And if i wanted to use the chagneset with say tailwind exmaple I have to manually merge them. It's sort of a pain. Why not have a central cli tool that takes in some basic inputs and builds the repo with everything you need? We'll that's whay i'm going to attemp to do.
+
+> Please do note, the initail build is going to focus on chanesets & tailwind. I will add in others as I go. But please don't expect this blog to cover them all.
