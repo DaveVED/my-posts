@@ -97,14 +97,14 @@ Auth0 does proivde there own framwork but I wnated to play around with NextAuth.
 
 ## Bootstrapping a new app
 
-As noted we're going to be using the turbo monorepo, so I don't need to make a new GitHub project or anything. I simply need to bootstrap a new app in my current repo. I'm going to start pretty bare bones, so I'm not going to use their `npx` starter for now. Here is what I'm doing.
+As noted, we're going to be using the turbo monorepo, so I don't need to make a new GitHub project or anything. I simply need to bootstrap a new app in my current repo. I'm going to start pretty bare bones, so I'm not going to use their npx starter for now. Here is what I'm doing.
 
-### Create a `./apps/collectibles` directory.
+### Create a ./apps/collectibles directory.
 
-### Create the root files at `./apps/collectibles`:
-#### The `./tsconfig.json` file
+### Create the root files at ./apps/collectibles:
+#### The ./tsconfig.json file
 
-TypeScript configuration file. Which will extend our shared common config in our packages `"extends": "@repo/typescript-config/nextjs.json"`
+TypeScript configuration file. It will extend our shared common config in our packages `"extends": "@repo/typescript-config/nextjs.json"`.
 
 ```json
 {
@@ -127,9 +127,10 @@ TypeScript configuration file. Which will extend our shared common config in our
 }
 ```
 
-#### The `./tailwind.config.ts` file.
+#### The ./tailwind.config.ts file
 
-Tailwind CSS configuration file. For now we just define the conent, and nothing else, we'll expand on it as needed.
+Tailwind CSS configuration file. For now, we just define the content and nothing else. We'll expand on it as needed.
+
 ```typescript
 import type { Config } from "tailwindcss";
 
@@ -140,12 +141,12 @@ const config: Config = {
 export default config;
 ```
 
-#### The `./README.md`
+#### The ./README.md file
 
 Project README file.
 
 #### `./postcss.config.js`
-PostCSS configuration file. Should be empty but you can update later
+PostCSS configuration file. It should be empty, but you can update it later.
 
 ```javascript
 // If you want to use other PostCSS plugins, see the following:
@@ -160,33 +161,46 @@ module.exports = {
 ```
 
 #### The `./next.config.js` file.
-Next.js configuration file.
+Next.js configuration file. Your project is dependent on this, the exmaple i'm using is.
+
+```javascript
+const nextConfig = {
+  reactStrictMode: true,
+  transpilePackages: ["@repo/ui"],
+  pageExtensions: ["ts", "tsx", "md", "mdx", "js"],
+  output: "standalone",
+};
+
+export default nextConfig;
+```
 
 #### The `./package.json` file.
 
-Project manifest file. Ensure the app runs on a port that is not taken. I am using 3001 as my other app is running on 3000.
+t manifest file. Ensure the app runs on a port that is not taken. I am using `3001` as my other app is running on `3000`.
 
 ```json
+{
   "scripts": {
     "dev": "next dev --turbo --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit"
-  },
+  }
+}
 ```
 
-#### The `./Dockerfile` file.
+#### The ./Dockerfile file
 
 Docker configuration file for containerizing the app.
 
-#### The `./.gitignore` file
+#### The ./.gitignore file
 
 Git ignore file specifying which files to ignore in version control.
 
-#### The `./.eslintrc.js` file.
+#### The ./.eslintrc.js file
 
-ESLint configuration file. This uses the common configs from shared pacakge as well.
+ESLint configuration file. This uses the common configs from the shared package as well.
 
 ```javascript
 /** @type {import("eslint").Linter.Config} */
@@ -200,14 +214,15 @@ module.exports = {
 };
 ```
 
-#### The `./.env.local` file.
+#### The ./.env.local file
 
 Environment variables file for local development.
 
 ### Step 4 - Create `./apps/collectibles/styles`
 
-#### Create `./globals.css` file
-Global CSS styles. If using tailwind must have the required `@`
+#### Create ./globals.css file
+Global CSS styles. If using Tailwind CSS, you must include the required `@` directives.
+
 ```css
 @tailwind base;
 @tailwind components;
@@ -216,8 +231,9 @@ Global CSS styles. If using tailwind must have the required `@`
 
 ### Create `./src` directory
 
-#### Create the `layout.tsx` file
-This is a wrapper pretty much, in next they have the concept of layouts, it's a Layout component for the app. We will start simple, with just the clidren pretty much.
+#### Create the layout.tsx file
+This is a wrapper component. In Next.js, they have the concept of layouts. It's a Layout component for the app. We will start simple, with just the children.
+
 ```typescript
 import type { Metadata } from "next";
 import "../../styles/globals.css";
@@ -240,7 +256,7 @@ export default function RootLayout({
 }
 ```
 
-#### `page.tsx` file
+#### Create the page.tsx file
 
 Main page component for the app. We will start with a hello world.
 
@@ -255,15 +271,15 @@ export default function LandingPage() {
 ```
 
 #### The `./public` file
-      > Static files directory.
+Static files directory.
 
-I've pushed these to a branch that should be long lived, in case you want to comb through each file. But after you ahve this setup you should be able to start your app.
+I've pushed these to a branch that should be long-lived, in case you want to comb through each file. But after you have this setup, you should be able to start your app.
 
 ### Starting the Collectibles applicaiton
 
-Now that we have are project setup, we can test the `hello world`. The thing to remember is that we are going to be on port `3001` for this app.
+Now that we have our project setup, we can test the `hello world`. The thing to remember is that we are going to be on port `3001` for this app.
 
-From the root directory you can run `pnpm dev`, and you should see the turbo repo multipleixer setup..
+From the root directory you can run `pnpm dev`, and you should see the turbo repo multiplexer setup.
 
 ![Collectibles Architecture](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/tmux-server-3001.png)
 
