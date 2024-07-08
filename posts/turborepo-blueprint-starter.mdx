@@ -7,10 +7,89 @@ excerpt: >
   Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published decent examples, but they are all over the place and the changesets example requires a lot of copy paste. I am going to create a cli tool to allow dynamic generation of these examples from a single blueprint.
 ---
 
-Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published decent examples, but they are all over the place and the changesets example requires a lot of copy paste. I am going to create a cli tool to allow dynamic generation of these examples from a single blueprint.
+Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published decent examples, but they are all over the place and the changesets example requires a lot of copy paste. I am going to create a CLI tool to allow dynamic generation of these examples from a single blueprint.
 
-## A deeper look at the problem
+## A Deeper Look at the Problem
 
-All of the turbo examples can be found on there [github](https://github.com/vercel/turbo/tree/main/examples), and as you'll see they have *great* examples and *a lot* of examples. But the way the examples were built achives one thing, for each example, and some of the examles require many interventaiton (for example the changeset one). And if i wanted to use the chagneset with say tailwind exmaple I have to manually merge them. It's sort of a pain. Why not have a central cli tool that takes in some basic inputs and builds the repo with everything you need? We'll that's whay i'm going to attemp to do.
+All of the turbo examples can be found on their [GitHub](https://github.com/vercel/turbo/tree/main/examples), and as you'll see, they have *great* examples and *a lot* of examples. But the way the examples were built achieves one thing for each example, and some of the examples require many interventions (for example, the changeset one). If I wanted to use the changeset with, say, the Tailwind example, I have to manually merge them. It's sort of a pain. Why not have a central CLI tool that takes in some basic inputs and builds the repo with everything you need? Well, that's what I'm going to attempt to do.
 
-> Please do note, the initail build is going to focus on chanesets & tailwind. I will add in others as I go. But please don't expect this blog to cover them all.
+> Please note, the initial build is going to focus on changesets and Tailwind. I will add others as I go. But please don't expect this blog to cover them all.
+
+## Project Initialization
+
+Ok this might differ than some projects you've seen as i'm mixing golang and node. I'm going to go with a simple directory setup like such.
+
+```bash
+turborepo-blueprint/
+├── go/
+│   ├── main.go
+│   ├── Makefile
+│   └── go.mod
+├── node/
+│   ├── src/
+│   │   └── index.ts
+│   ├── bin/
+│   │   └── my-go-cli
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── .changeset/
+│       └── README.md
+└── README.md
+```
+
+It's going to allow me to isolate the golang features from the node, and still keep a small clean repo.
+
+### Step 1 - Setup the Go Program
+
+We're going to start simple as i'd like to ensure the node wrapper works, so for the golang i'm going to just print a `hello world` to the terminal for now. 
+
+```bash
+mkdir go && cd go
+go mod init github.com/DaveVED/turborepo-blueprint
+```
+
+You can then create a file called `main.go` with minial input.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+}
+```
+
+Then test it if you'd like.
+
+![Golang Hello World](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-blueprint-starter/golang-hello-world.png)
+
+With that we're done with go code for now (of course we have so much to do, I want to verify this works first).
+
+#### Step 3 - The Makefile
+
+I lied we'll need to create a makefile as we'll requrie the binarys for the node wrapper. We'll be short, sweet and to the point for now. The one thing to note is that you will *need to create your node folder* or some OS will complain.
+
+```
+BINARY_NAME=turborepo-blueprint
+
+build-linux:
+    GOOS=linux GOARCH=amd64 go build -o ../node/bin/$(BINARY_NAME) main.go
+
+build-mac:
+    GOOS=darwin GOARCH=amd64 go build -o ../node/bin/$(BINARY_NAME) main.go
+
+build-windows:
+    GOOS=windows GOARCH=amd64 go build -o ../node/bin/$(BINARY_NAME).exe main.go
+
+build-all: build-linux build-mac build-windows
+```
+
+You can test this out, if you'd like. But once we have this basic binary we can move forward, linux is all I really care about right now (maybe macos, well for sure macos later, but I may not add windows support).
+
+```bash
+make build-linux
+ls ../node/bin/turborepo-blueporint
+```
+
+![Makefile Linux First Build](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-blueprint-starter/makefile-linux-first-build.png)
