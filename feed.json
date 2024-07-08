@@ -9,10 +9,11 @@
   },
   {
     "excerpt": "Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published a decent example, but it has one main issue: it requires a lot of manual copy/paste to get going with your project, such as changing the project name in many places. Along with this, it's missing a few tools that I like, which would require merging a few of their examples.",
-    "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-with-changesets-npx-starter-in-go/cover-image.jpg",
+    "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-with-changesets-npx-starter-in-go/cover-iamge.jpg",
     "path": "turborepo-with-changesets-npx-starter-in-go.mdx",
     "title": "Turborepo with Changesets npx Starter in Go with Node Wrapper",
     "author": "Dave Dennis",
     "date": "2024-08-07"
   }
 ]
+
