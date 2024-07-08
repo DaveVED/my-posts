@@ -99,9 +99,9 @@ Auth0 does proivde there own framwork but I wnated to play around with NextAuth.
 
 As noted we're going to be using the turbo monorepo, so I don't need to make a new GitHub project or anything. I simply need to bootstrap a new app in my current repo. I'm going to start pretty bare bones, so I'm not going to use their `npx` starter for now. Here is what I'm doing.
 
-### Step 1 - Create a `./apps/collectibles` directory.
+### Create a `./apps/collectibles` directory.
 
-### Step 3 - Create the root files at `./apps/collectibles`:
+### Create the root files at `./apps/collectibles`:
 #### The `./tsconfig.json` file
 
 TypeScript configuration file. Which will extend our shared common config in our packages `"extends": "@repo/typescript-config/nextjs.json"`
@@ -256,3 +256,17 @@ export default function LandingPage() {
 
 #### The `./public` file
       > Static files directory.
+
+I've pushed these to a branch that should be long lived, in case you want to comb through each file. But after you ahve this setup you should be able to start your app.
+
+### Starting the Collectibles applicaiton
+
+Now that we have are project setup, we can test the `hello world`. The thing to remember is that we are going to be on port `3001` for this app.
+
+From the root directory you can run `pnpm dev`, and you should see the turbo repo multipleixer setup..
+
+![Collectibles Architecture](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/tmux-server-3001.png)
+
+and you can visit it at `localhost:30001`
+
+![Collectibles Architecture](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/hello-wrold-nextjs.png)
