@@ -87,3 +87,10 @@ I'm going to also touch on a few things that you may be asking your self, to jus
 - This diagram does not show networking it's high level.
 
 ### Authentication
+
+Both my sites need auth. For the blog for things like comments, likes, etc.. For the collectibles, I want to add in a shop one day (I keep saying this I may just do it.). The soultion for me here is simple, as *I WILL NOT ROLL OUT MY OWN AUTH*. So I went with this.
+
+- [NextAuth.js](https://next-auth.js.org/)- This is a nice framework and supports a lot of providers.
+- [Auth0 by Okta](https://auth0.com/) - For my AuthZ/AuthN, pretty simple setup.
+
+Auth0 does proivde there own framwork but I wnated to play around with NextAuth.
