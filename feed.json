@@ -1,10 +1,26 @@
 [
-  {
-    "excerpt": "I've been exploring Next.js recently and looking for ways to gather visitor analytics on my personal site davedennis.dev. While Next.js, developed by Vercel, suggests deploying to Vercel, which offers built-in observability features and the handy @vercel/analytics package, I chose to deploy on Amazon Web Services instead.",
-    "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/cloudfront-analytics-tracking-system/cloudfront-eample-logging-config.png",
-    "date": "2024-01-28",
-    "path": "cloudfront-analytics-tracking-system.mdx",
-    "title": "Building a website analytics tracking system from CloudFront",
-    "author": "Dave Dennis"
-  }
+    {
+        "excerpt": "xxx",
+        "coverIamge": "xxx",
+        "date": "xxx",
+        "path": "xxx",
+        "title": "Building a simple personal site (with blog and portfolio) using Next.js",
+        "author": "Dave Dennis"
+    },
+    {
+        "excerpt": "xxx",
+        "coverIamge": "xxx",
+        "date": "xxx",
+        "path": "xxx",
+        "title": "Adding a comprehensive collectibles tracking and display system to your personal site",
+        "author": "Dave Dennis"
+    },
+    {
+        "excerpt": "xxx",
+        "coverIamge": "xxx",
+        "date": "xxx",
+        "path": "xxx",
+        "title": "Creating npx command to templatize your turborepo + changesets project",
+        "author": "Dave Dennis"
+    }
 ]
