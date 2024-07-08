@@ -1,9 +1,17 @@
 [
   {
-    "excerpt": "I've gotten really into collectibles lately. Well, I guess I've always been into them, but now I'm at a place where I can embrace the hobby. With this, I've faced one major problem, which is, I don't really have a good way to 1. track my stuff outside my brain so it's hard to share without word of mouth, and 2. I don't really have a way to show others besides having them over. To tackle this, I'm going to build a simple tracking and display system (maybe one day I'll add a bid system, we'll see).",
+    "excerpt": "I've gotten really into collectibles lately. Well, I guess I've always been into them, but now I'm at a place where I can embrace the hobby. With this, I've faced one major problem: I don't have a good way to track my stuff outside my brain, making it hard to share without word of mouth. Additionally, I don't have a way to show others besides having them over. To tackle this, I'm going to build a simple tracking and display system. Maybe one day I'll add a bidding system; we'll see.",
     "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/cover-image.jpg",
     "path": "collectibles-tracking-and-display-system.mdx",
-    "title": "A Collectibles Tracking and Display System in Next JS",
+    "title": "A Collectibles Tracking and Display System in Next.js",
+    "author": "Dave Dennis",
+    "date": "2024-08-07"
+  },
+  {
+    "excerpt": "Hands up, I love monorepos, but organizing them and finding the correct tooling is not the easiest thing in the world. Over the last year, I've decided that my favorite tech stack for npm packages and similar projects is using Turborepo to manage the monorepo and Changesets for versioning multiple packages. This setup enables a very clean directory structure. Vercel has published a decent example, but it has one main issue: it requires a lot of manual copy/paste to get going with your project, such as changing the project name in many places. Along with this, it's missing a few tools that I like, which would require merging a few of their examples.",
+    "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-with-changesets-npx-starter-in-go/cover-image.jpg",
+    "path": "turborepo-with-changesets-npx-starter-in-go.mdx",
+    "title": "Turborepo with Changesets npx Starter in Go with Node Wrapper",
     "author": "Dave Dennis",
     "date": "2024-08-07"
   }

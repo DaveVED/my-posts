@@ -36,20 +36,31 @@ will probably always be that way. I get attached to my items.
 
 ## The Architecture
 
-There were a few key architecture questions I needed to answer before getting started.
+There were a few key architecture questions I needed to answer before getting
+started.
 
 ### Where Should This Live (Domain)
 
-I've been going back and forth with this, and there are only really two logical options for me here.
+I've been going back and forth with this, and there are only really two logical
+options for me here.
 
-1. I can just let it live under [davedennis.dev](https://davedennis.dev) and create a `collectibles` path.
-2. I can create a subdomain [collectibles.davedennis.dev](https://collectibles.davedennis.dev).
+1. I can just let it live under [davedennis.dev](https://davedennis.dev) and
+   create a `collectibles` path.
+2. I can create a subdomain
+   [collectibles.davedennis.dev](https://collectibles.davedennis.dev).
 
-For whatever reason, I've decided to go with option two and have it as a subdomain. I might turn this into a shopping cart someday, which was the main driver here. I'd like to keep the logic isolated.
+For whatever reason, I've decided to go with option two and have it as a
+subdomain. I might turn this into a shopping cart someday, which was the main
+driver here. I'd like to keep the logic isolated.
 
 ### Where Should This Live (GitHub)
 
-My personal site [davedennis.dev](https://davedennis.dev) is set up with [Turbo Repo](https://turbo.build/) [*monorepo solution*](https://turbo.build/repo/docs#the-monorepo-solution) and I love it. If it was a net new domain, I'd create a new repo for this, but since it's a subdomain, I'm going to just add a new `app` to my monorepo. It'll look something like this:
+My personal site [davedennis.dev](https://davedennis.dev) is set up with
+[Turbo Repo](https://turbo.build/)
+[_monorepo solution_](https://turbo.build/repo/docs#the-monorepo-solution) and I
+love it. If it was a net new domain, I'd create a new repo for this, but since
+it's a subdomain, I'm going to just add a new `app` to my monorepo. It'll look
+something like this:
 
 ```bash
 ├── apps
@@ -71,40 +82,65 @@ My personal site [davedennis.dev](https://davedennis.dev) is set up with [Turbo 
 └── turbo.json
 ```
 
-It's very straightforward and it's going to let me grow my [davedennis.dev](https://davedennis.dev) domain as needed. And a direct [quote](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#specifying-packages-in-a-monorepo) for this setup from them. See here for more details.
+It's very straightforward and it's going to let me grow my
+[davedennis.dev](https://davedennis.dev) domain as needed. And a direct
+[quote](https://turbo.build/repo/docs/crafting-your-repository/structuring-a-repository#specifying-packages-in-a-monorepo)
+for this setup from them. See here for more details.
 
-> We recommend starting with splitting your packages into apps/ for applications and services and packages/ for everything else, like libraries and tooling.
+> We recommend starting with splitting your packages into apps/ for applications
+> and services and packages/ for everything else, like libraries and tooling.
 
 ### Where Should This Live (Hosting)
 
-The recommend way to deploy Next apps is via [Vercel](https://vercel.com/docs/deployments/overview) which makes sense as they created the framework. I on the other hand am an AWS guy, so I am just going to expand on my current architecture on AWS, for this. A high level diagram is as follows. I will note i'm sure vercel is great for hosting (granted i've read some horor stories about people getting surpoise bills but that's just the servless life), and I do think I shoudl give it a try, maybe for my next pet proejct (which I probalby wont finish - HA).
+The recommend way to deploy Next apps is via
+[Vercel](https://vercel.com/docs/deployments/overview) which makes sense as they
+created the framework. I on the other hand am an AWS guy, so I am just going to
+expand on my current architecture on AWS, for this. A high level diagram is as
+follows. I will note i'm sure vercel is great for hosting (granted i've read
+some horor stories about people getting surpoise bills but that's just the
+servless life), and I do think I shoudl give it a try, maybe for my next pet
+proejct (which I probalby wont finish - HA).
 
 ![Collectibles Architecture](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/architecture.jpeg)
 
-I'm going to also touch on a few things that you may be asking your self, to just clear the air, I won't make any other justifications, otherwise (it's my site, so who would care).
+I'm going to also touch on a few things that you may be asking your self, to
+just clear the air, I won't make any other justifications, otherwise (it's my
+site, so who would care).
 
-- Yes, I thought about s3. I use to run on it, but I wanted server side redering, and i'll 100% need it for this. The CloudFront + s3 setup was always free so that was a win, but with this setup I am just really incuring the cost of the ALB it's not the great debt, and worth the cost for me. 
+- Yes, I thought about s3. I use to run on it, but I wanted server side
+  redering, and i'll 100% need it for this. The CloudFront + s3 setup was always
+  free so that was a win, but with this setup I am just really incuring the cost
+  of the ALB it's not the great debt, and worth the cost for me.
 - This diagram does not show networking it's high level.
 
 ### Authentication
 
-Both my sites need auth. For the blog for things like comments, likes, etc.. For the collectibles, I want to add in a shop one day (I keep saying this I may just do it.). The soultion for me here is simple, as *I WILL NOT ROLL OUT MY OWN AUTH*. So I went with this.
+Both my sites need auth. For the blog for things like comments, likes, etc.. For
+the collectibles, I want to add in a shop one day (I keep saying this I may just
+do it.). The soultion for me here is simple, as _I WILL NOT ROLL OUT MY OWN
+AUTH_. So I went with this.
 
-- [NextAuth.js](https://next-auth.js.org/)- This is a nice framework and supports a lot of providers.
+- [NextAuth.js](https://next-auth.js.org/)- This is a nice framework and
+  supports a lot of providers.
 - [Auth0 by Okta](https://auth0.com/) - For my AuthZ/AuthN, pretty simple setup.
 
 Auth0 does proivde there own framwork but I wnated to play around with NextAuth.
 
 ## Bootstrapping a new app
 
-As noted, we're going to be using the turbo monorepo, so I don't need to make a new GitHub project or anything. I simply need to bootstrap a new app in my current repo. I'm going to start pretty bare bones, so I'm not going to use their npx starter for now. Here is what I'm doing.
+As noted, we're going to be using the turbo monorepo, so I don't need to make a
+new GitHub project or anything. I simply need to bootstrap a new app in my
+current repo. I'm going to start pretty bare bones, so I'm not going to use
+their npx starter for now. Here is what I'm doing.
 
 ### Create a ./apps/collectibles directory.
 
 ### Create the root files at ./apps/collectibles:
+
 #### The ./tsconfig.json file
 
-TypeScript configuration file. It will extend our shared common config in our packages `"extends": "@repo/typescript-config/nextjs.json"`.
+TypeScript configuration file. It will extend our shared common config in our
+packages `"extends": "@repo/typescript-config/nextjs.json"`.
 
 ```json
 {
@@ -129,13 +165,14 @@ TypeScript configuration file. It will extend our shared common config in our pa
 
 #### The ./tailwind.config.ts file
 
-Tailwind CSS configuration file. For now, we just define the content and nothing else. We'll expand on it as needed.
+Tailwind CSS configuration file. For now, we just define the content and nothing
+else. We'll expand on it as needed.
 
 ```typescript
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: ["./src/**/*.{ts,tsx,mdx,md,js}"]
+  content: ['./src/**/*.{ts,tsx,mdx,md,js}'],
 };
 
 export default config;
@@ -146,6 +183,7 @@ export default config;
 Project README file.
 
 #### `./postcss.config.js`
+
 PostCSS configuration file. It should be empty, but you can update it later.
 
 ```javascript
@@ -161,14 +199,16 @@ module.exports = {
 ```
 
 #### The `./next.config.js` file.
-Next.js configuration file. Your project is dependent on this, the exmaple i'm using is.
+
+Next.js configuration file. Your project is dependent on this, the exmaple i'm
+using is.
 
 ```javascript
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@repo/ui"],
-  pageExtensions: ["ts", "tsx", "md", "mdx", "js"],
-  output: "standalone",
+  transpilePackages: ['@repo/ui'],
+  pageExtensions: ['ts', 'tsx', 'md', 'mdx', 'js'],
+  output: 'standalone',
 };
 
 export default nextConfig;
@@ -176,7 +216,8 @@ export default nextConfig;
 
 #### The `./package.json` file.
 
-t manifest file. Ensure the app runs on a port that is not taken. I am using `3001` as my other app is running on `3000`.
+t manifest file. Ensure the app runs on a port that is not taken. I am using
+`3001` as my other app is running on `3000`.
 
 ```json
 {
@@ -200,14 +241,15 @@ Git ignore file specifying which files to ignore in version control.
 
 #### The ./.eslintrc.js file
 
-ESLint configuration file. This uses the common configs from the shared package as well.
+ESLint configuration file. This uses the common configs from the shared package
+as well.
 
 ```javascript
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: ["@repo/eslint-config/next.js"],
-  parser: "@typescript-eslint/parser",
+  extends: ['@repo/eslint-config/next.js'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     project: true,
   },
@@ -221,7 +263,9 @@ Environment variables file for local development.
 ### Step 4 - Create `./apps/collectibles/styles`
 
 #### Create ./globals.css file
-Global CSS styles. If using Tailwind CSS, you must include the required `@` directives.
+
+Global CSS styles. If using Tailwind CSS, you must include the required `@`
+directives.
 
 ```css
 @tailwind base;
@@ -232,7 +276,9 @@ Global CSS styles. If using Tailwind CSS, you must include the required `@` dire
 ### Create `./src` directory
 
 #### Create the layout.tsx file
-This is a wrapper component. In Next.js, they have the concept of layouts. It's a Layout component for the app. We will start simple, with just the children.
+
+This is a wrapper component. In Next.js, they have the concept of layouts. It's
+a Layout component for the app. We will start simple, with just the children.
 
 ```typescript
 import type { Metadata } from "next";
@@ -271,15 +317,20 @@ export default function LandingPage() {
 ```
 
 #### The `./public` file
+
 Static files directory.
 
-I've pushed these to a branch that should be long-lived, in case you want to comb through each file. But after you have this setup, you should be able to start your app.
+I've pushed these to a branch that should be long-lived, in case you want to
+comb through each file. But after you have this setup, you should be able to
+start your app.
 
 ### Starting the Collectibles applicaiton
 
-Now that we have our project setup, we can test the `hello world`. The thing to remember is that we are going to be on port `3001` for this app.
+Now that we have our project setup, we can test the `hello world`. The thing to
+remember is that we are going to be on port `3001` for this app.
 
-From the root directory you can run `pnpm dev`, and you should see the turbo repo multiplexer setup.
+From the root directory you can run `pnpm dev`, and you should see the turbo
+repo multiplexer setup.
 
 ![Tmux Server 3001](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/tmux-server-3001.png)
 
