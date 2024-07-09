@@ -314,3 +314,31 @@ jobs:
         # You can do something when a publish happens.
         run: my-slack-bot send-notification --message "A new version of ${GITHUB_REPOSITORY} was published!"
 ```
+
+## Try it out
+
+You can try it wout, assuming you have a valid package
+
+```sh
+➜  temp npm view @daveved/turborepo-blueprint
+
+@daveved/turborepo-blueprint@0.0.3 | Proprietary | deps: none | versions: 3
+
+bin: turborepo-blueprint
+
+dist
+.tarball: https://registry.npmjs.org/@daveved/turborepo-blueprint/-/turborepo-blueprint-0.0.3.tgz
+.shasum: 5d6ffcb6e03b7608659eff4d5f9796dd4b1c1c02
+.integrity: sha512-vRSOf5ddU43/09S+19rMHMjnKabERP9Vyb4nAVPTZqkbxkiEsyFJPtr5XgpWk95Swl5XPS5fL0jnrGjm/ZVshA==
+.unpackedSize: 5.8 MB
+
+maintainers:
+- daveved <dave.w.dennis@gmail.com>
+
+dist-tags:
+latest: 0.0.3  
+
+published 54 minutes ago by daveved <dave.w.dennis@gmail.com>
+➜  temp npx turborepo-blueprint              
+Hello World
+```
