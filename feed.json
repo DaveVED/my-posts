@@ -1,13 +1,5 @@
 [
     {
-      "excerpt": "I've gotten really into collectibles lately. While I've always been interested in them, I'm now at a point where I can fully embrace the hobby. However, I've encountered a significant issue: I don't have an efficient way to track my collection outside of my memory, making it difficult to share details without word of mouth. Additionally, displaying my collection to others is limited to in-person visits. To address these challenges, I'm going to build a simple tracking and display system. Perhaps one day I'll even add a bidding system; we'll see.",
-      "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/collectibles-tracking-and-display-system/cover-image.jpg",
-      "path": "collectibles-tracking-and-display-system.mdx",
-      "title": "A Collectibles Tracking and Display System in Next.js",
-      "author": "Dave Dennis",
-      "date": "2024-08-07"
-    },
-    {
       "excerpt": "I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want most of my logic in TypeScript because it lacks support for templating. Python has good support with the [*copier framework*](https://copier.readthedocs.io/en/stable/), but Go, with its robust templating support through `text/template` and `html/template` packages, is my preferred choice for creating a flexible and powerful CLI tool.",
       "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/cover_iamge.jpg",
       "path": "deploy-go-cli-to-npm.mdx",
