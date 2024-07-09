@@ -100,3 +100,217 @@ ls ../node/bin/turborepo-blueprint
 ![Makefile Linux First Build](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/makefile-linux-first-build.png)
 
 > we will use `build-all` at the end, this is just to show you.
+
+### The node wrapper
+
+This is what I thought would be the easy part (no it was not). But we need a way to execute the `golang` cli without them having go on there machine, and really without them knowing.
+
+#### Setting up the typescript directory
+
+Let's first init the project
+
+```bash
+cd ../node
+npm init -y
+npm install typescript @types/node
+```
+
+> normally we add a -D tag here to only add it as a dev dependince but was facing some issue with users not having typecript installed so why not force it.
+
+You can then configure your `./node/tsconfig.json`. I use a pretty standard
+tempalte. But you can read a great blog post
+[here](https://www.totaltypescript.com/tsconfig-cheat-sheet) on some of these.
+
+```json
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "declarationMap": true,
+    "lib": ["es2022"]
+  },
+  "include": ["index.ts"]
+}
+```
+and with that you have the basic repo setup required.
+
+#### Creating the typescript wrapper
+
+At a high level all we need to do is ensure we install the correct binary on the correct machine.
+
+> make sure you bundle your binary wiht you dist.
+
+```typescript
+#!/usr/bin/env node
+
+import { execFileSync } from 'child_process';
+import { fileURLToPath } from 'url';
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const platform = os.platform();
+let binaryPath;
+
+switch (platform) {
+  case 'linux':
+  case 'darwin':
+    console.log("HERE");
+    binaryPath = path.resolve(__dirname, 'bin/turborepo-blueprint');
+    break;
+  case 'win32':
+    binaryPath = path.resolve(__dirname, 'bin/turborepo-blueprint.exe');
+    break;
+  default:
+    console.error(`Unsupported platform: ${platform}`);
+    process.exit(1);
+}
+
+console.log(`Resolved binary path: ${binaryPath}`);
+
+if (!fs.existsSync(binaryPath)) {
+  console.error(`Binary not found at path: ${binaryPath}`);
+  process.exit(1);
+}
+
+// Ensure the binary has execute permissions on Unix-based systems
+if (platform !== 'win32') {
+  try {
+    fs.chmodSync(binaryPath, '755');
+  } catch (error) {
+    console.error(`Failed to set execute permissions on binary: ${error}`);
+    process.exit(1);
+  }
+}
+
+try {
+  execFileSync(binaryPath, { stdio: 'inherit' });
+  console.log("Binary executed successfully.");
+} catch (error) {
+  console.error('Failed to run the binary:', error);
+  process.exit(1);
+}
+```
+
+Now you can test this, with the current setup before we publish it.
+
+```bash
+npm run build
+chmod +x dist/index.js # for local testing run this
+npx turborepo-blueprint   
+Hello World
+```
+
+### Publishing with Changeset
+
+Versioning and publishing packages on npm can be cumbersome. To streamline this process, I prefer using Changeset, which handles versioning and changelogs automatically.
+
+#### Installing Changeset
+
+To get started with Changeset, you need to install it as a development dependency in your project:
+
+```sh
+npm install @changesets/cli -D
+```
+
+Next, initialize Changeset in your project. This will create a .changeset folder and a configuration file.
+
+```sh
+npx changeset init
+```
+
+#### Creating a Changeset
+
+Whenever you make changes that you want to release, create a new changeset. This will prompt you to describe the changes and generate a markdown file in the .changeset directory.
+
+```sh
+npx changeset
+```
+Follow the prompts to describe your changes.
+
+#### Committing the Changeset
+
+After creating a changeset, commit it to your version control system (e.g., Git):
+
+```sh
+git add .changeset
+git commit -m "Add changeset for new changes"
+```
+
+#### Versioning and Changelog Generation
+
+When you’re ready to release, run the following command to bump versions and generate changelogs:
+
+```sh
+npx changeset version
+```
+
+This command updates the version in your package.json and creates or updates the changelog.
+
+#### Deploying the Package
+
+Finally, publish your package to npm:
+
+```sh
+npm publish
+```
+
+#### Automating with CI/CD
+
+For larger projects or more frequent releases, you can automate the versioning and publishing process using a CI/CD pipeline. Here’s an example of a GitHub Actions workflow (.github/workflows/release.yml) that automates the release process
+
+```yaml
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm 8
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: pnpm release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Send a Slack notification if a publish happens
+        if: steps.changesets.outputs.published == 'true'
+        # You can do something when a publish happens.
+        run: my-slack-bot send-notification --message "A new version of ${GITHUB_REPOSITORY} was published!"
+```
