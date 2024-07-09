@@ -9,7 +9,7 @@
     },
     {
       "excerpt": "I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want most of my logic in TypeScript because it lacks support for templating. Python has good support with the [*copier framework*](https://copier.readthedocs.io/en/stable/), but Go, with its robust templating support through `text/template` and `html/template` packages, is my preferred choice for creating a flexible and powerful CLI tool.",
-      "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/cover_image.jpg",
+      "coverImage": "hhttps://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/cover_iamge.jpg",
       "path": "deploy-go-cli-to-npm.mdx",
       "title": "Deploying a Go CLI to npm",
       "author": "Dave Dennis",
