@@ -2,9 +2,102 @@
 title: 'Deploying a Go CLI to npm'
 author: 'Dave Dennis'
 date: '2024-08-07'
-coverImage: 'https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/cover_iamge.jpg'
+coverImage: 'https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/cover_image.jpg'
 excerpt: >
-  I'm working on some projects that require templating. If you work with TypeScript, you know it doesn't support templating well. I have been following Bun for some time and know they use Zig, but have packaged their tools for npm. I am going to figure out how to deploy my Go CLI to npm, so users can run `npx create-xyz@latest` with Go running in the background.
+  I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want most of my logic in TypeScript because it lacks support for templating. Python has good support with the [*copier framework*](https://copier.readthedocs.io/en/stable/), but Go, with its robust templating support through `text/template` and `html/template` packages, is my preferred choice for creating a flexible and powerful CLI tool.
 ---
 
-Ok, so I want to build a cli tool that is along the lines of `npx create-xyz@latest`.
+I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want most of my logic living in TypeScript. Why? Because it lacks support for templating (to be fair, it really has no support for it at all). Who does have support for it? Python, using the [*copier framework*](https://copier.readthedocs.io/en/stable/), which works well, and of course, Go. Go offers robust templating support through its `text/template` and `html/template` packages, making it an ideal choice for creating a flexible and powerful CLI tool.
+
+For this, I'm going to go with Go. More folks would probably appreciate the copier (since Python is more user-friendly, depending on who you ask; if you ask me, Go is, and it's the fastest software to get up and running with `go mod init` for the win).
+
+Anyways, this blog is going to cover the basics: let's deploy a Hello World Go CLI to npm so we can do something like `npx create-xyz@latest`.
+
+## Directory Setup
+
+I've been going back and forth with this, but for this example, we'll go with the bare minimum that will allow us to get a Go CLI deployed to npm, so we can meet our acceptance criteria. We'll end up with something like this:
+
+```bash
+├── go
+│   ├── go.mod
+│   ├── main.go
+│   └── Makefile
+├── LICENSE
+└── node
+    ├── bin
+    │   └── turborepo-blueprint
+    ├── CHANGELOG.md
+    ├── dist
+    │   ├── ...
+    ├── package.json
+    ├── package-lock.json
+    └── tsconfig.json
+```
+
+It's simple and straightforward and won't allow us to get confused for this basic example. So let's get started with it.
+
+## Getting Started
+
+We're sticking to the basics here, and everyone's favorite Hello World application. For this example, the Go application will simply print Hello World to your terminal. Something like this:
+
+```bash
+➜  temp npx turborepo-blueprint
+Hello World
+```
+
+It's that straightforward. We just want to prove we can do this!
+
+### Creating Your Go App
+
+Setting up a Go app is easier than any other framework (in my opinion). We're going to do this:
+
+```bash
+mkdir go && cd go
+go mod init github.com/DaveVED/turborepo-blueprint
+```
+
+You can then create a file called main.go with minimal input:
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello World")
+}
+```
+
+Then test it if you'd like.
+
+![Golang Hello World](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/golang-hello-world.png)
+
+### The Makefile
+
+To create a Makefile, we'll require the binaries for the Node wrapper. We'll be short, sweet, and to the point for now. The one thing to note is that you will need to create your node folder or some OS will complain.
+
+```bash
+BINARY_NAME=turborepo-blueprint
+
+build-linux:
+	GOOS=linux GOARCH=amd64 go build -o ../node/bin/$(BINARY_NAME) main.go
+
+build-mac:
+	GOOS=darwin GOARCH=amd64 go build -o ../node/bin/$(BINARY_NAME) main.go
+
+build-windows:
+	GOOS=windows GOARCH=amd64 go build -o ../node/bin/$(BINARY_NAME).exe main.go
+
+build-all: build-linux build-mac build-windows
+```
+
+You can test this out if you'd like. But once we have this basic binary, we can move forward. Linux is all I really care about right now, but you can also run the make build-all.
+
+```bash
+make build-linux
+ls ../node/bin/turborepo-blueprint
+```
+
+![Makefile Linux First Build(https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/makefile-linux-first-build.png)
+
+> we will use `build-all` at the end, this is just to show you.
