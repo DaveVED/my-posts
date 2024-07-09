@@ -66,7 +66,7 @@ Then test it if you'd like.
 
 With that we're done with go code for now (of course we have so much to do, I want to verify this works first).
 
-#### Step 3 - The Makefile
+#### Step 2 - The Makefile
 
 I lied we'll need to create a makefile as we'll requrie the binarys for the node wrapper. We'll be short, sweet and to the point for now. The one thing to note is that you will *need to create your node folder* or some OS will complain.
 
@@ -85,7 +85,7 @@ build-windows:
 build-all: build-linux build-mac build-windows
 ```
 
-You can test this out, if you'd like. But once we have this basic binary we can move forward, linux is all I really care about right now (maybe macos, well for sure macos later, but I may not add windows support).
+You can test this out, if you'd like. But once we have this basic binary we can move forward, linux is all I really care about right now, but you can also run the `make build-all`.
 
 ```bash
 make build-linux
@@ -93,3 +93,84 @@ ls ../node/bin/turborepo-blueporint
 ```
 
 ![Makefile Linux First Build](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/turborepo-blueprint-starter/makefile-linux-first-build.png)
+
+#### Step 3 - Seting up the Node.js Wrapper with Typescript
+
+Ok now all that's left before we can publish and do the simple test is setting up the Node wrapper. We'll start simple.
+
+```bash
+cd ../node
+npm init -y
+npm install typescript @types/node --save-dev
+```
+
+You can then configure your `./node/tsconfig.json`. I use a pretty standard tempalte. But you can read a great blog post [here](https://www.totaltypescript.com/tsconfig-cheat-sheet) on some of these.
+
+```json
+{
+  "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    /* If transpiling with TypeScript: */
+    "module": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true,
+
+    /* AND if you're building for a library: */
+    "declaration": true,
+
+    /* AND if you're building for a library in a monorepo: */
+    "composite": true,
+    "declarationMap": true,
+
+    /* If your code doesn't run in the DOM: */
+    "lib": ["es2022"]
+  }
+}
+```
+
+And then we can create the wrapper.
+
+```typescript
+import { execFileSync } from 'child_process';
+import * as path from 'path';
+import * as os from 'os';
+
+const platform = os.platform();
+let binaryPath: string;
+
+switch (platform) {
+  case 'linux':
+    binaryPath = path.join(__dirname, '../bin', 'turborepo-blueprint');
+    break;
+  case 'darwin':
+    binaryPath = path.join(__dirname, '../bin', 'turborepo-blueprint');
+    break;
+  case 'win32':
+    binaryPath = path.join(__dirname, '../bin', 'turborepo-blueprint.exe');
+    break;
+  default:
+    console.error(`Unsupported platform: ${platform}`);
+    process.exit(1);
+}
+
+try {
+  execFileSync(binaryPath, { stdio: 'inherit' });
+} catch (error) {
+  console.error('Failed to run the Go binary:', error);
+  process.exit(1);
+}
+```
