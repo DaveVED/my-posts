@@ -1,11 +1,34 @@
 [
-    {
-      "excerpt": "I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want most of my logic in TypeScript because it lacks support for templating. Python has good support with the [*copier framework*](https://copier.readthedocs.io/en/stable/), but Go, with its robust templating support through `text/template` and `html/template` packages, is my preferred choice for creating a flexible and powerful CLI tool.",
-      "coverImage": "https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/cover_iamge.jpg",
-      "path": "deploy-go-cli-to-npm.mdx",
-      "title": "Deploying a Go CLI to npm",
-      "author": "Dave Dennis",
-      "date": "2024-08-07"
-    }
-  ]
-  
+  {
+    "title": "Deploying a Go CLI to npm",
+    "summary": "I’m building a CLI tool similar to `npx create-xyz@latest`. Rather than using TypeScript, which lacks robust templating support, I prefer Go for its powerful `text/template` and `html/template` packages. This approach allows me to create a flexible and effective CLI tool, comparable to Python's [Copier framework](https://copier.readthedocs.io/en/stable/).",
+    "date": "2024-08-07",
+    "path": "posts/deploy-go-cli-to-npm.mdx",
+    "coverImage": "posts/deploy-go-cli-to-npm/cover-image.jpg",
+    "tags": "blog"
+  },
+  {
+    "title": "NixOS Black Screen on First Load with Nvidia",
+    "summary": "When loading the NixOS Minimal ISO image for the first time on a system with an Nvidia graphics card, you may encounter a black screen. This can be resolved with specific graphics configurations, which can also be adapted for gaming setups.",
+    "date": "2024-11-01",
+    "path": "posts/nixos-black-screen-graphics-configuration.mdx",
+    "coverImage": "posts/nixos-black-screen-graphics-configuration/cover-image.jpg",
+    "tags": "til | nixos | nix-with-me"
+  },
+  {
+    "title": "Configuring Git Credentials on NixOS",
+    "summary": "If you're using NixOS without a graphical environment like GNOME, you may need to configure a keyring to store Git credentials. Pairing this with the NixOS GitHub package configuration can prevent repeated prompts for your GitHub credentials.",
+    "date": "2024-11-01",
+    "path": "posts/nixos-github-credentials-configurations.mdx",
+    "coverImage": "posts/nixos-github-credentials-configurations/cover-image.jpg",
+    "tags": "til | nixos | nix-with-me"
+  },
+  {
+    "title": "Setting Up Sound on NixOS with an Audio Interface",
+    "summary": "To enable sound on NixOS, you’ll need to configure your setup accordingly. This guide provides a basic setup that can be expanded to support advanced configurations, including audio interfaces.",
+    "date": "2024-11-01",
+    "path": "posts/nixos-starter-sound-configurations.mdx",
+    "coverImage": "posts/nixos-starter-sound-configurations/cover-image.jpg",
+    "tags": "til | nixos | nix-with-me"
+  }
+]

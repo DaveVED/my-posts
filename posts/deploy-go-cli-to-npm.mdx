@@ -4,20 +4,41 @@ author: 'Dave Dennis'
 date: '2024-08-07'
 coverImage: 'https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/deploy-go-cli-to-npm/cover_iamge.jpg'
 excerpt: >
-  I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want most of my logic in TypeScript because it lacks support for templating. Python has good support with the [*copier framework*](https://copier.readthedocs.io/en/stable/), but Go, with its robust templating support through `text/template` and `html/template` packages, is my preferred choice for creating a flexible and powerful CLI tool.
+  I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't
+  want most of my logic in TypeScript because it lacks support for templating.
+  Python has good support with the [*copier
+  framework*](https://copier.readthedocs.io/en/stable/), but Go, with its robust
+  templating support through `text/template` and `html/template` packages, is my
+  preferred choice for creating a flexible and powerful CLI tool.
 ---
 
-I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want most of my logic living in TypeScript. Why? Because it lacks support for templating. To be fair, it really has no support for it at all. Who does have support for templating? 
+I want to build a CLI tool similar to `npx create-xyz@latest`, but I don't want
+most of my logic living in TypeScript. Why? Because it lacks support for
+templating. To be fair, it really has no support for it at all. Who does have
+support for templating?
 
-Zig seemed to do something similar with Bun, so we should be able to do something similar with a different language, for example, Python, using the [`copier framework`](https://copier.readthedocs.io/en/stable/), which works well. And of course, there's Go. Go offers robust templating support through its [*`text/template`*](https://pkg.go.dev/text/template) and [*`html/template packages`*](https://pkg.go.dev/html/template), making it an ideal choice for creating a flexible and powerful CLI tool.
+Zig seemed to do something similar with Bun, so we should be able to do
+something similar with a different language, for example, Python, using the
+[`copier framework`](https://copier.readthedocs.io/en/stable/), which works
+well. And of course, there's Go. Go offers robust templating support through its
+[_`text/template`_](https://pkg.go.dev/text/template) and
+[_`html/template packages`_](https://pkg.go.dev/html/template), making it an
+ideal choice for creating a flexible and powerful CLI tool.
 
-For this exmaple, I'm going to go with Go (lol). More folks might appreciate the copier framework (since Python is more user-friendly, depending on who you ask), but in my opinion, Go is easier to get up and running with thanks to go mod init.
+For this exmaple, I'm going to go with Go (lol). More folks might appreciate the
+copier framework (since Python is more user-friendly, depending on who you ask),
+but in my opinion, Go is easier to get up and running with thanks to go mod
+init.
 
-Anyways, this blog is going to cover the basics: *let's deploy a Hello World Go CLI to npm* so we can do something like `npx create-xyz@latest`.
+Anyways, this blog is going to cover the basics: _let's deploy a Hello World Go
+CLI to npm_ so we can do something like `npx create-xyz@latest`.
 
 ## Directory Setup
 
-I've been going back and forth with this, but for this example, we'll go with the bare minimum that will allow us to get a Go CLI deployed to npm and meet our acceptance criteria (display `hello world!`). We'll end up with something like this:
+I've been going back and forth with this, but for this example, we'll go with
+the bare minimum that will allow us to get a Go CLI deployed to npm and meet our
+acceptance criteria (display `hello world!`). We'll end up with something like
+this:
 
 ```bash
 ├── go
@@ -35,11 +56,14 @@ I've been going back and forth with this, but for this example, we'll go with th
     └── tsconfig.json
 ```
 
-It's simple and straightforward and will prevent confusion for this basic example. So let's get started with it.
+It's simple and straightforward and will prevent confusion for this basic
+example. So let's get started with it.
 
 ## Getting Started
 
-We're sticking to the basics here with everyone's favorite `Hello World` application. For this example, the Go application will simply print `"Hello World"` to your terminal. Something like this:
+We're sticking to the basics here with everyone's favorite `Hello World`
+application. For this example, the Go application will simply print
+`"Hello World"` to your terminal. Something like this:
 
 ```bash
 ➜ npx turborepo-blueprint
@@ -50,7 +74,8 @@ It's that straightforward. We just want to prove we can do this!
 
 ### Creating Your Go App
 
-Setting up a Go app is easier than any other framework (in my opinion). We're going to do this:
+Setting up a Go app is easier than any other framework (in my opinion). We're
+going to do this:
 
 ```bash
 mkdir go && cd go
@@ -75,7 +100,9 @@ Then test it if you'd like.
 
 ### The Makefile
 
-To create a Makefile, we'll require the binaries for the Node wrapper. We'll be short, sweet, and to the point for now. One thing to note is that you will need to create your node folder, or some OS will complain.
+To create a Makefile, we'll require the binaries for the Node wrapper. We'll be
+short, sweet, and to the point for now. One thing to note is that you will need
+to create your node folder, or some OS will complain.
 
 ```bash
 BINARY_NAME=turborepo-blueprint
@@ -92,7 +119,9 @@ build-windows:
 build-all: build-linux build-mac build-windows
 ```
 
-You can test this out if you'd like. But once we have this basic binary, we can move forward. Linux is all I really care about right now, but you can also run make build-all.
+You can test this out if you'd like. But once we have this basic binary, we can
+move forward. Linux is all I really care about right now, but you can also run
+make build-all.
 
 ```bash
 ➜ make build-linux
@@ -105,7 +134,9 @@ You can test this out if you'd like. But once we have this basic binary, we can 
 
 ### The node wrapper
 
-This part might seem easy, but it turned out to be more challenging than expected. We need a way to execute the Go CLI without requiring users to have Go installed on their machines, and ideally without them even knowing it's there.
+This part might seem easy, but it turned out to be more challenging than
+expected. We need a way to execute the Go CLI without requiring users to have Go
+installed on their machines, and ideally without them even knowing it's there.
 
 #### Setting up the typescript directory
 
@@ -117,9 +148,13 @@ Let's first initialize the project:
 ➜ npm install typescript @types/node
 ```
 
-> Normally, we add a `-D` tag here to only add it as a dev dependency, but I faced some issues with users not having TypeScript installed, so why not force it?
+> Normally, we add a `-D` tag here to only add it as a dev dependency, but I
+> faced some issues with users not having TypeScript installed, so why not force
+> it?
 
-You can then configure your `./node/tsconfig.json.` I use a pretty standard template, but you can read a great blog post [here](https://www.totaltypescript.com/tsconfig-cheat-sheet) on some of these.
+You can then configure your `./node/tsconfig.json.` I use a pretty standard
+template, but you can read a great blog post
+[here](https://www.totaltypescript.com/tsconfig-cheat-sheet) on some of these.
 
 ```json
 {
@@ -143,7 +178,8 @@ With that, you have the basic repository setup required.
 
 #### Creating the typescript wrapper
 
-At a high level, all we need to do is ensure we install the correct binary on the correct machine.
+At a high level, all we need to do is ensure we install the correct binary on
+the correct machine.
 
 > Make sure you bundle your binary with your distribution.
 
@@ -245,23 +281,27 @@ Now you can test this with the current setup before we publish it.
 ```bash
 ➜ npm run build
 ➜ chmod +x dist/index.js # for local testing run this
-➜ npx turborepo-blueprint   
+➜ npx turborepo-blueprint
 ➜ Hello World
 ```
 
 ### Publishing with Changeset
 
-Versioning and publishing packages on npm can be cumbersome. To streamline this process, I prefer using Changeset, which handles versioning and changelogs automatically.
+Versioning and publishing packages on npm can be cumbersome. To streamline this
+process, I prefer using Changeset, which handles versioning and changelogs
+automatically.
 
 #### Installing Changeset
 
-To get started with Changeset, you need to install it as a development dependency in your project:
+To get started with Changeset, you need to install it as a development
+dependency in your project:
 
 ```sh
 ➜ npm install @changesets/cli -D
 ```
 
-Next, initialize Changeset in your project. This will create a .changeset folder and a configuration file.
+Next, initialize Changeset in your project. This will create a .changeset folder
+and a configuration file.
 
 ```sh
 ➜ npx changeset init
@@ -269,7 +309,10 @@ Next, initialize Changeset in your project. This will create a .changeset folder
 
 #### Creating a Changeset
 
-Whenever you make changes that you want to release, create a new changeset. This will prompt you to describe the changes and generate a markdown file in the `.changeset ` directory.
+Whenever you make changes that you want to release, create a new changeset. This
+will prompt you to describe the changes and generate a markdown file in the
+`.changeset ` directory.
+
 ```sh
 ➜ npx changeset
 ```
@@ -278,7 +321,8 @@ Follow the prompts to describe your changes.
 
 #### Committing the Changeset
 
-After creating a changeset, commit it to your version control system (e.g., Git):
+After creating a changeset, commit it to your version control system (e.g.,
+Git):
 
 ```sh
 ➜ git add .changeset
@@ -287,13 +331,15 @@ After creating a changeset, commit it to your version control system (e.g., Git)
 
 #### Versioning and Changelog Generation
 
-When you’re ready to release, run the following command to bump versions and generate changelogs:
+When you’re ready to release, run the following command to bump versions and
+generate changelogs:
 
 ```sh
 ➜ npx changeset version
 ```
 
-This command updates the version in your package.json and creates or updates the changelog.
+This command updates the version in your package.json and creates or updates the
+changelog.
 
 #### Deploying the Package
 
@@ -303,7 +349,8 @@ Finally, publish your package to npm:
 ➜ npm publish
 ```
 
-> You can always autmoate this with a cli if you want, vercel has a greate exmaple.
+> You can always autmoate this with a cli if you want, vercel has a greate
+> exmaple.
 
 ## Try it out
 
@@ -326,9 +373,9 @@ maintainers:
 - daveved <dave.w.dennis@gmail.com>
 
 dist-tags:
-latest: 0.0.3  
+latest: 0.0.3
 
 published 54 minutes ago by daveved <dave.w.dennis@gmail.com>
-➜ npx turborepo-blueprint              
+➜ npx turborepo-blueprint
 Hello World
 ```
