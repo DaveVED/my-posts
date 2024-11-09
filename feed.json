@@ -10,7 +10,7 @@
   {
     "title": "NixOS Black Screen on First Load with Nvidia",
     "summary": "When loading the NixOS Minimal ISO image for the first time on a system with an Nvidia graphics card, you may encounter a black screen. This can be resolved with specific graphics configurations, which can also be adapted for gaming setups.",
-    "date": "2024-11-01",
+    "date": "2024-11-07",
     "path": "posts/nixos-black-screen-graphics-configuration.mdx",
     "coverImage": "posts/nixos-black-screen-graphics-configuration/cover-image.jpg",
     "tags": "til | nixos | nix-with-me"
@@ -18,7 +18,7 @@
   {
     "title": "Configuring Git Credentials on NixOS",
     "summary": "If you're using NixOS without a graphical environment like GNOME, you may need to configure a keyring to store Git credentials. Pairing this with the NixOS GitHub package configuration can prevent repeated prompts for your GitHub credentials.",
-    "date": "2024-11-01",
+    "date": "2024-11-07",
     "path": "posts/nixos-github-credentials-configurations.mdx",
     "coverImage": "posts/nixos-github-credentials-configurations/cover-image.jpg",
     "tags": "til | nixos | nix-with-me"
@@ -26,7 +26,7 @@
   {
     "title": "Setting Up Sound on NixOS with an Audio Interface",
     "summary": "To enable sound on NixOS, you’ll need to configure your setup accordingly. This guide provides a basic setup that can be expanded to support advanced configurations, including audio interfaces.",
-    "date": "2024-11-01",
+    "date": "2024-11-07",
     "path": "posts/nixos-starter-sound-configurations.mdx",
     "coverImage": "posts/nixos-starter-sound-configurations/cover-image.jpg",
     "tags": "til | nixos | nix-with-me"
