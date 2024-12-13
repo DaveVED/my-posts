@@ -1,0 +1,21 @@
+
+# Setting Up Amazon Aurora DSQL with Drizzle
+
+Amazon recently announced the release of [Aurora DSQL](https://aws.amazon.com/blogs/database/introducing-amazon-aurora-dsql/), which, in my opinion, fills a significant gap in AWS's database offerings. One of the criticisms of Aurora was its relatively high minimum entry cost and the complexity it brought to the design process. For many use cases, I often found myself questioning: why not just use RDS or a standard MySQL database? Why deal with all the added overhead?
+
+With the introduction of a serverless distributed SQL database that offers virtually unlimited scale, unparalleled availability, and zero infrastructure management, Aurora DSQL is incredibly appealing. Now I can design for scale without worrying about incurring massive costs if my side project doesn’t take off. That peace of mind is a huge plus.
+
+In this guide, I’ll walk through configuring Aurora DSQL and integrating it with Drizzle ORM. One of the standout features of Aurora DSQL is how straightforward it makes setting up basic projects, like a typical three-tier application. In some cases, I’ve even found it easier than DynamoDB, which doesn’t always cover all use cases. For me, that’s a win.
+
+## Creating your first cluster
+
+Currently, the platform supports PostgreSQL with out-of-the-box functionality available through both the CLI and the SDK. While this is _great_, my primary interest lies in CDK support, as the current options don't fully align with my long-term goals.
+
+For now, I'll proceed by creating the cluster manually in just a few clicks. I'm leaving linked regions off and enabling deletion protection. These settings aren't critical for this purpose, but at a high level, they provide additional safeguards for production environments.
+
+1. ![Search For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
+2. ![Input Criteria for DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
+
+Now you can wait for it to go green and validate that the status moves into _Active_ status.
+
+1. ![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-3.png)
