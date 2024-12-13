@@ -1,21 +1,60 @@
-
 # Setting Up Amazon Aurora DSQL with Drizzle
 
-Amazon recently announced the release of [Aurora DSQL](https://aws.amazon.com/blogs/database/introducing-amazon-aurora-dsql/), which, in my opinion, fills a significant gap in AWS's database offerings. One of the criticisms of Aurora was its relatively high minimum entry cost and the complexity it brought to the design process. For many use cases, I often found myself questioning: why not just use RDS or a standard MySQL database? Why deal with all the added overhead?
+Amazon recently announced the release of [Aurora DSQL](https://aws.amazon.com/blogs/database/introducing-amazon-aurora-dsql/), a significant upgrade to AWS's database offerings. Previously, Aurora was criticized for its relatively high minimum entry cost and complexity. For many use cases, the question often arose: why not just use RDS or a standard MySQL database? Aurora's overhead sometimes made it less appealing.
 
-With the introduction of a serverless distributed SQL database that offers virtually unlimited scale, unparalleled availability, and zero infrastructure management, Aurora DSQL is incredibly appealing. Now I can design for scale without worrying about incurring massive costs if my side project doesn’t take off. That peace of mind is a huge plus.
+With the introduction of Aurora DSQL—a serverless, distributed SQL database offering virtually unlimited scale, unparalleled availability, and zero infrastructure management—AWS has addressed these concerns. Now you can design for scale without worrying about massive costs if your side project doesn’t take off. That peace of mind is a game-changer.
 
-In this guide, I’ll walk through configuring Aurora DSQL and integrating it with Drizzle ORM. One of the standout features of Aurora DSQL is how straightforward it makes setting up basic projects, like a typical three-tier application. In some cases, I’ve even found it easier than DynamoDB, which doesn’t always cover all use cases. For me, that’s a win.
+In this guide, I’ll walk you through configuring Aurora DSQL and integrating it with Drizzle ORM. Aurora DSQL’s simplicity makes it ideal for projects like three-tier applications, where traditional databases might struggle with scaling or cost-efficiency. For me, it’s even easier to set up than DynamoDB in some cases. That’s a big win.
 
-## Creating your first cluster
+---
 
-Currently, the platform supports PostgreSQL with out-of-the-box functionality available through both the CLI and the SDK. While this is _great_, my primary interest lies in CDK support, as the current options don't fully align with my long-term goals.
+## Creating Your First Cluster
 
-For now, I'll proceed by creating the cluster manually in just a few clicks. I'm leaving linked regions off and enabling deletion protection. These settings aren't critical for this purpose, but at a high level, they provide additional safeguards for production environments.
+Currently, Aurora DSQL supports PostgreSQL with functionality accessible through both the AWS CLI and SDK. While this is fantastic, I’m particularly interested in CDK support, though it doesn’t fully meet my needs just yet. For now, let’s create the cluster manually using the AWS Management Console.
 
-1. ![Search For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
-2. ![Input Criteria for DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
+Here are the steps to create your cluster:
 
-Now you can wait for it to go green and validate that the status moves into _Active_ status.
+1. **Search for Aurora DSQL**  
+   - Navigate to the RDS section in the AWS Console and search for Aurora DSQL.  
+   - ![Search For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
 
-1. ![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-3.png)
+2. **Input Cluster Criteria**  
+   - Configure your cluster. For this walkthrough, we’ll leave linked regions off and enable deletion protection. These settings are optional for this tutorial but are highly recommended for production environments.  
+   - ![Input Criteria for DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-2.png)
+
+3. **Wait for the Cluster to Activate**  
+   - Once the cluster is created, wait until its status turns **Active**.  
+   - ![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-3.png)
+   - ![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-4.png)
+
+---
+
+## Validating the Connection via Terminal
+
+Now that the database is created, let’s ensure it’s accessible before integrating it programmatically. This step will save you troubleshooting time later. Follow these steps:
+
+1. **Get the Cluster Endpoint**  
+   - Retrieve the endpoint from the AWS Management Console.  
+   - ![Cluster Endpoint](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-5.png)
+
+2. **Connect to the Database**  
+   - Use the following command to connect. Replace `<endpoint>` with your cluster endpoint:  
+   ```bash
+   PGSSLMODE=require \
+   psql --dbname postgres \
+   --username admin \
+   --host <endpoint>
+   ```
+3. **Authenticate with a Temporary Token**
+    - If prompted for a token, generate one via the AWS Console. Tokens are valid for 15 minutes.
+    - In production, we’ll configure automatic token rotation using Drizzle ORM. For now, manually input the token.
+4. **Validate the Connection**
+    - Upon successful connection, you should see a prompt like this:
+        ```bash
+        postgres=>
+       ``
+       (https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-7.png)
+5. If you arer asked for a _password for user admin_, you can get a 15 min password by clicking connect in the console. We will handle the rotation of this in drizzle later.
+   - ![Cluster Password](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-6.png)
+
+If you’ve reached this step, your Aurora DSQL database is ready for integration!
