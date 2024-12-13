@@ -54,8 +54,8 @@ Now that the database is created, let’s ensure it’s accessible before integr
         postgres=>
        ```
        (https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-7.png)
-5. If you arer asked for a _password for user admin_, you can get a 15 min password by clicking connect in the console. We will handle the rotation of this in drizzle later.
-   - ![Cluster Password](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-6.png)
+> If you arer asked for a _password for user admin_, you can get a 15 min password by clicking connect in the console. We will handle the rotation of this in drizzle later.
+> ![Cluster Password](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-6.png)
 
 If you’ve reached this step, your Aurora DSQL database is ready for integration!
 
@@ -63,9 +63,12 @@ If you’ve reached this step, your Aurora DSQL database is ready for integratio
 
 Now that we know we can setup and connect to a to a cluster let's setup drizzle, i'm going to use dirzzle at this point to create everyting I need, but i'll proivde teh SQL if you dont' want to take that route, at which point you can run that , and just test teh orm at the end, but i'm on a code first kick.
 
-### Setting Up the Project
+## Setting Up the Project
 
-We first need to get started by creating a basic setup for our project that may look something like this.
+### Project Structure
+
+Here’s an example of the basic project structure:
+
 ```bash
 .
 ├── bun.lockb
@@ -73,37 +76,49 @@ We first need to get started by creating a basic setup for our project that may 
 ├── package.json
 ├── README.md
 ├── src
-│   ├── db
-│   │   ├── posts.ts
-│   │   ├── index.ts
-│   │   └── schema.ts
+│   ├── db
+│   │   ├── posts.ts
+│   │   ├── index.ts
+│   │   └── schema.ts
 ├── tsconfig.json
 └── tsup.config.ts
-```
 
-Let's step through this, first and formost, i'm using `bun` anything should work `pnpm` for example, but for this i'm going to use `bun`. The first thing you should do is run `bun init`, and bootstrap your typescript project. Now you can validate the `tsconfig.json` and `tsup.config.ts` files. For this simple example you can use these.
+#### Initial Setup
+
+We’re using bun for this setup, but tools like pnpm would also work. To get started:
+
+    1. Initialize the project:
+    ```bash
+    bun init
+    ```
+    2. Bootstrap your TypeScript project.
+    3. Validate and create the necessary configuration files:
+
+##### tsconfig.json
 
 ```json
 {
-    "extends": "@tsconfig/node20/tsconfig.json",
-    "compilerOptions": {
-      "declaration": true,
-      "module": "nodenext",
-      "target": "esnext",
-      "moduleResolution": "nodenext",
-      "outDir": "./dist",
-      "allowSyntheticDefaultImports": true,
-      "baseUrl": ".",
-      "paths": {
-        "@/*": ["src/*"]
-      }
-    },
-    "include": ["src"],
-    "exclude": ["test", "dist"]
-  }
-  ```
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "module": "nodenext",
+    "target": "esnext",
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["test", "dist"]
+}
+```
 
-  ```typescript
+###### tsup.config.ts
+
+```typescript
 import { defineConfig, type Options } from "tsup";
 
 export default defineConfig((options: Options) => ({
@@ -112,27 +127,42 @@ export default defineConfig((options: Options) => ({
   format: ["cjs"],
   ...options,
 }));
-  ```
+```
 
-  and the `package.json`
+###### package.json
 
-  ```json
-  {
-    "name": "@dsqr/api",
-    "version": "0.0.0",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "start": "node dist/index.js",
-        "dev": "tsup --watch --onSuccess \"node dist/app.local.cjs\"",
-        "build": "tsup",
-        "clean": "rm -rf dist",
-        "typecheck": "tsc --noEmit",
-        "lint": "eslint src/"
-    },
-    "devDependencies": {
-        "tsup": "^8.0.2",
-        "typescript": "^5.3.3"
-    }
+```json
+{
+  "name": "@dsqr/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsup --watch --onSuccess \"node dist/app.local.cjs\"",
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3"
+  }
 }
 ```
+
+#### Setting Up the Database
+
+1. To start working on the database, install the required dependencies:
+
+##### Install Dependencies
+    
+    1. Add the main dependencies:
+    ```bash
+    bun add drizzle-orm pg dotenv
+    ```
+    2. Add the development dependencies:
+    ```bash
+    bun add -D drizzle-kit tsx @types/pg
+    ```
