@@ -58,3 +58,81 @@ Now that the database is created, let’s ensure it’s accessible before integr
    - ![Cluster Password](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-6.png)
 
 If you’ve reached this step, your Aurora DSQL database is ready for integration!
+
+## Configureing Drizzle
+
+Now that we know we can setup and connect to a to a cluster let's setup drizzle, i'm going to use dirzzle at this point to create everyting I need, but i'll proivde teh SQL if you dont' want to take that route, at which point you can run that , and just test teh orm at the end, but i'm on a code first kick.
+
+### Setting Up the Project
+
+We first need to get started by creating a basic setup for our project that may look something like this.
+```bash
+.
+├── bun.lockb
+├── drizzle.config.ts
+├── package.json
+├── README.md
+├── src
+│   ├── db
+│   │   ├── posts.ts
+│   │   ├── index.ts
+│   │   └── schema.ts
+├── tsconfig.json
+└── tsup.config.ts
+```
+
+Let's step through this, first and formost, i'm using `bun` anything should work `pnpm` for example, but for this i'm going to use `bun`. The first thing you should do is run `bun init`, and bootstrap your typescript project. Now you can validate the `tsconfig.json` and `tsup.config.ts` files. For this simple example you can use these.
+
+```json
+{
+    "extends": "@tsconfig/node20/tsconfig.json",
+    "compilerOptions": {
+      "declaration": true,
+      "module": "nodenext",
+      "target": "esnext",
+      "moduleResolution": "nodenext",
+      "outDir": "./dist",
+      "allowSyntheticDefaultImports": true,
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"]
+      }
+    },
+    "include": ["src"],
+    "exclude": ["test", "dist"]
+  }
+  ```
+
+  ```typescript
+import { defineConfig, type Options } from "tsup";
+
+export default defineConfig((options: Options) => ({
+  entryPoints: ["src/app.local.ts"],
+  clean: true,
+  format: ["cjs"],
+  ...options,
+}));
+  ```
+
+  and the `package.json`
+
+  ```json
+  {
+    "name": "@dsqr/api",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "start": "node dist/index.js",
+        "dev": "tsup --watch --onSuccess \"node dist/app.local.cjs\"",
+        "build": "tsup",
+        "clean": "rm -rf dist",
+        "typecheck": "tsc --noEmit",
+        "lint": "eslint src/"
+    },
+    "devDependencies": {
+        "tsup": "^8.0.2",
+        "typescript": "^5.3.3"
+    }
+}
+```
