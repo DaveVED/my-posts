@@ -16,13 +16,3 @@
     "tags": "blog"
   }
 ]
-
-CREATE TABLE IF NOT EXISTS tastingswithtay_dev.distribution_list (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title VARCHAR(255) NOT NULL UNIQUE,
-    slug VARCHAR(255) NOT NULL UNIQUE,
-    content VARCHAR(255) NOT NULL UNIQUE,
-    coverImage VARCHAR(255) NOT NULL UNIQUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-);
