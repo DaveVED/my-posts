@@ -1,3 +1,15 @@
+---
+title: 'Aurora DSQL Setup with Drizzle'
+author: 'Dave Dennis'
+date: '2024-12-13'
+coverImage: 'https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/cover-image.jpg'
+summary: >
+  Amazon recently launched Aurora DSQL, a serverless distributed SQL database
+  designed for always-available applications. This post explores how to set up
+  Aurora DSQL, create a schema, and connect it to Drizzle ORM with a TypeScript-based setup.
+tags: 'blog'
+---
+
 # Aurora DSQL Setup with Drizzle
 
 Amazon recently launched a new service called Aurora DSQL, which they describe as:
@@ -302,7 +314,7 @@ export const postsTable = mySchema.table("posts", {
 6. Test the Setup
 
 Create a new .ts file to test database operations. For example:
-```
+```typescript
 import { getDbInstance } from "./src/db";
 
 (async () => {
