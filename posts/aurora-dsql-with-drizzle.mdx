@@ -1,136 +1,175 @@
-# Setting Up Amazon Aurora DSQL with Drizzle
+# Aurora DSQL Setup with Drizzle
 
-Amazon recently announced the release of [Aurora DSQL](https://aws.amazon.com/blogs/database/introducing-amazon-aurora-dsql/), a significant upgrade to AWS's database offerings. Previously, Aurora was criticized for its relatively high minimum entry cost and complexity. For many use cases, the question often arose: why not just use RDS or a standard MySQL database? Aurora's overhead sometimes made it less appealing.
+Amazon recently launched a new service called Aurora DSQL, which they describe as:
 
-With the introduction of Aurora DSQL—a serverless, distributed SQL database offering virtually unlimited scale, unparalleled availability, and zero infrastructure management—AWS has addressed these concerns. Now you can design for scale without worrying about massive costs if your side project doesn’t take off. That peace of mind is a game-changer.
+> The fastest serverless distributed SQL database for always available applications.
 
-In this guide, I’ll walk you through configuring Aurora DSQL and integrating it with Drizzle ORM. Aurora DSQL’s simplicity makes it ideal for projects like three-tier applications, where traditional databases might struggle with scaling or cost-efficiency. For me, it’s even easier to set up than DynamoDB in some cases. That’s a big win.
+Whether or not this claim holds true, Aurora DSQL addresses several critical gaps AWS had in the "database" space. It introduces an offering that allows developers to create side projects with the ability to scale to zero—a game-changer for cost-conscious development. Previously, using Aurora for side projects often felt excessive due to its pricing model. This led many developers, myself included, to resort to alternatives like DynamoDB, a basic RDS setup, or even third-party managed services like PlanetScale.
+
+Now, with Aurora DSQL, I can set up a fully managed, serverless, distributed SQL database with minimal effort and without worrying about runaway costs. AWS appears to have filled a significant gap with this offering, making it an attractive choice for projects where scalability and cost-efficiency are key. So far, I haven’t been surprised by unexpected bills, and the simplicity of managing this service feels like a major step forward for AWS in the database ecosystem.
+
+Seeing as I use TypeScript for most of my side projects, I want to show how easy it is to connect DSQL to an ORM like Drizzle.
 
 ---
 
 ## Creating Your First Cluster
 
-Currently, Aurora DSQL supports PostgreSQL with functionality accessible through both the AWS CLI and SDK. While this is fantastic, I’m particularly interested in CDK support, though it doesn’t fully meet my needs just yet. For now, let’s create the cluster manually using the AWS Management Console.
+### **1. Search for Aurora DSQL**
+- Navigate to the **RDS** section in the AWS Management Console.
+- Search for **Aurora DSQL** in the database options.
 
-Here are the steps to create your cluster:
-
-1. **Search for Aurora DSQL**  
-   - Navigate to the RDS section in the AWS Console and search for Aurora DSQL.  
-   - ![Search For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
-
-2. **Input Cluster Criteria**  
-   - Configure your cluster. For this walkthrough, we’ll leave linked regions off and enable deletion protection. These settings are optional for this tutorial but are highly recommended for production environments.  
-   - ![Input Criteria for DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-2.png)
-
-3. **Wait for the Cluster to Activate**  
-   - Once the cluster is created, wait until its status turns **Active**.  
-   - ![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-3.png)
-   - ![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-4.png)
+![Search For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
 
 ---
 
-## Validating the Connection via Terminal
+### **2. Input Cluster Criteria**
+- Configure the cluster according to your needs:
+  - For this walkthrough, we’ll **leave linked regions off** and **enable deletion protection**.
+  - These settings are optional for this tutorial but are highly recommended for production environments.
 
-Now that the database is created, let’s ensure it’s accessible before integrating it programmatically. This step will save you troubleshooting time later. Follow these steps:
+![Input Criteria for DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-2.png)
 
-1. **Get the Cluster Endpoint**  
-   - Retrieve the endpoint from the AWS Management Console.  
-   - ![Cluster Endpoint](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-5.png)
+---
 
-2. **Connect to the Database**  
-   - Use the following command to connect. Replace `<endpoint>` with your cluster endpoint:  
-   ```bash
-   PGSSLMODE=require \
-   psql --dbname postgres \
-   --username admin \
-   --host <endpoint>
-   ```
-3. **Authenticate with a Temporary Token**
-    - If prompted for a token, generate one via the AWS Console. Tokens are valid for 15 minutes.
-    - In production, we’ll configure automatic token rotation using Drizzle ORM. For now, manually input the token.
-4. **Validate the Connection**
-    - Upon successful connection, you should see a prompt like this:
-        ```bash
-        postgres=>
-       ```
-       (https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-7.png)
-> If you arer asked for a _password for user admin_, you can get a 15 min password by clicking connect in the console. We will handle the rotation of this in drizzle later.
-> ![Cluster Password](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-6.png)
+### **3. Wait for the Cluster to Activate**
+- Once the cluster is created, its status will initially show as **Creating**.
+- Wait for the status to change to **Active**.
 
-If you’ve reached this step, your Aurora DSQL database is ready for integration!
+![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-3.png)  
+![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-4.png)
 
-## Configureing Drizzle
+---
 
-Now that we know we can setup and connect to a to a cluster let's setup drizzle, i'm going to use dirzzle at this point to create everyting I need, but i'll proivde teh SQL if you dont' want to take that route, at which point you can run that , and just test teh orm at the end, but i'm on a code first kick.
+Following these steps, you’ll have a functional Aurora DSQL cluster ready for your applications. In the next steps, we’ll explore connecting to this cluster and integrating it with **Drizzle ORM**. Stay tuned!
 
-## Setting Up the Project
+---
 
-### Project Structure
+## Connecting to Your Cluster
 
-Here’s an example of the basic project structure:
+Now that you have created your cluster, we should connect to it to ensure everything is working correctly before proceeding further.
+
+### **1. Note Down Your Cluster Endpoint and Connect via Your Terminal**
+Run the following command in your terminal:
 
 ```bash
-.
-├── bun.lockb
-├── drizzle.config.ts
-├── package.json
-├── README.md
-├── src
-│   ├── db
-│   │   ├── posts.ts
-│   │   ├── index.ts
-│   │   └── schema.ts
-├── tsconfig.json
-└── tsup.config.ts
-
-#### Initial Setup
-
-We’re using bun for this setup, but tools like pnpm would also work. To get started:
-
-    1. Initialize the project:
-    ```bash
-    bun init
-    ```
-    2. Bootstrap your TypeScript project.
-    3. Validate and create the necessary configuration files:
-
-##### tsconfig.json
-
-```json
-{
-  "extends": "@tsconfig/node20/tsconfig.json",
-  "compilerOptions": {
-    "declaration": true,
-    "module": "nodenext",
-    "target": "esnext",
-    "moduleResolution": "nodenext",
-    "outDir": "./dist",
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
-  },
-  "include": ["src"],
-  "exclude": ["test", "dist"]
-}
+PGSSLMODE=require \
+psql --dbname postgres \
+--username admin \
+--host <endpoint>
 ```
 
-###### tsup.config.ts
+Upon successful connection, you should see a prompt like this:
 
-```typescript
-import { defineConfig, type Options } from "tsup";
-
-export default defineConfig((options: Options) => ({
-  entryPoints: ["src/app.local.ts"],
-  clean: true,
-  format: ["cjs"],
-  ...options,
-}));
+```bash
+postgres=>
 ```
 
-###### package.json
+> If prompted for a password for the user admin, you can generate a temporary 15-minute password by clicking Connect in the console. Password rotation will be handled automatically later using Drizzle.
+> ![Cluster Password](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-6.png)
 
+## # Aurora DSQL Setup with Drizzle
+
+Amazon recently launched a new service called Aurora DSQL, which they describe as:
+
+> The fastest serverless distributed SQL database for always available applications.
+
+Whether or not this claim holds true, Aurora DSQL addresses several critical gaps AWS had in the "database" space. It introduces an offering that allows developers to create side projects with the ability to scale to zero—a game-changer for cost-conscious development. Previously, using Aurora for side projects often felt excessive due to its pricing model. This led many developers, myself included, to resort to alternatives like DynamoDB, a basic RDS setup, or even third-party managed services like PlanetScale.
+
+Now, with Aurora DSQL, I can set up a fully managed, serverless, distributed SQL database with minimal effort and without worrying about runaway costs. AWS appears to have filled a significant gap with this offering, making it an attractive choice for projects where scalability and cost-efficiency are key. So far, I haven’t been surprised by unexpected bills, and the simplicity of managing this service feels like a major step forward for AWS in the database ecosystem.
+
+Seeing as I use TypeScript for most of my side projects, I want to show how easy it is to connect DSQL to an ORM like Drizzle.
+
+---
+
+## Creating Your First Cluster
+
+### **1. Search for Aurora DSQL**
+- Navigate to the **RDS** section in the AWS Management Console.
+- Search for **Aurora DSQL** in the database options.
+
+![Search For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-1.png)
+
+---
+
+### **2. Input Cluster Criteria**
+- Configure the cluster according to your needs:
+  - For this walkthrough, we’ll **leave linked regions off** and **enable deletion protection**.
+  - These settings are optional for this tutorial but are highly recommended for production environments.
+
+![Input Criteria for DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-2.png)
+
+---
+
+### **3. Wait for the Cluster to Activate**
+- Once the cluster is created, its status will initially show as **Creating**.
+- Wait for the status to change to **Active**.
+
+![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-3.png)  
+![Validation For DSQL](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-4.png)
+
+---
+
+Following these steps, you’ll have a functional Aurora DSQL cluster ready for your applications. In the next steps, we’ll explore connecting to this cluster and integrating it with **Drizzle ORM**. Stay tuned!
+
+---
+
+## Connecting to Your Cluster
+
+Now that you have created your cluster, we should connect to it to ensure everything is working correctly before proceeding further.
+
+### **1. Note Down Your Cluster Endpoint and Connect via Your Terminal**
+Run the following command in your terminal:
+
+```bash
+PGSSLMODE=require \
+psql --dbname postgres \
+--username admin \
+--host <endpoint>
+```
+
+Upon successful connection, you should see a prompt like this:
+
+```bash
+postgres=>
+```
+
+> If prompted for a password for the user admin, you can generate a temporary 15-minute password by clicking Connect in the console. Password rotation will be handled automatically later using Drizzle.
+> ![Cluster Password](https://raw.githubusercontent.com/DaveVED/my-posts/main/posts/aurora-dsql-with-drizzle/dsql-step-6.png)
+
+## Configure your cluster for development
+
+While you can use Drizzle to create and manage your schema, we’ll manually create it for this walkthrough.
+
+Run the following SQL commands while connected to your database:
+
+```SQL
+CREATE SCHEMA "davedennis_dev";
+CREATE TABLE IF NOT EXISTS davedennis_dev.posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL UNIQUE,
+    slug VARCHAR(255) NOT NULL UNIQUE,
+    content TEXT NOT NULL,
+    cover_image VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+```
+
+With the schema created, we can proceed to set up our Drizzle project. Stay tuned for the next steps!
+
+## Connect to the Database with Drizzle
+
+This guide shows how to set up and connect to a database using Bun and Drizzle ORM.
+
+1. Initialize the Project
+Start by creating a new project with Bun:
+```bash
+bun init
+```
+Delete the default index.ts file that was generated.
+2. Update package.json
+
+Modify the package.json file to look like this:
 ```json
 {
   "name": "@dsqr/api",
@@ -145,24 +184,137 @@ export default defineConfig((options: Options) => ({
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/"
   },
+  "dependencies": {
+    "@aws-sdk/dsql-signer": "^3.705.0",
+    "drizzle-orm": "^0.37.0",
+    "pg": "^8.13.1",
+    "pg-pool": "^3.7.0"
+  },
   "devDependencies": {
+    "@types/node": "^20.11.24",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   }
 }
 ```
+3. Update tsconfig.json
 
-#### Setting Up the Database
+Replace the tsconfig.json with the following configuration:
+```json
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "module": "nodenext",
+    "target": "esnext",
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["test", "dist"]
+}
+```
 
-1. To start working on the database, install the required dependencies:
+4. Set Up the Database Connection
 
-##### Install Dependencies
-    
-    1. Add the main dependencies:
-    ```bash
-    bun add drizzle-orm pg dotenv
-    ```
-    2. Add the development dependencies:
-    ```bash
-    bun add -D drizzle-kit tsx @types/pg
-    ```
+Create a src/db directory, then add an index.ts file with the following content:
+
+```typescript
+import pg from "pg";
+import { DsqlSigner } from "@aws-sdk/dsql-signer";
+const { Pool } = pg;
+import { drizzle } from "drizzle-orm/node-postgres";
+import { postsTable } from "./schema.js";
+
+const region = "us-east-1";
+const hostname = "54abtvzm25xz52v2z2gbfn53uu.dsql.us-east-1.on.aws";
+const database = "postgres";
+
+let tokenExpiry: Date | null = null;
+let pool: pg.Pool | null = null;
+
+const getAuthToken = async (): Promise<string> => {
+  const signer = new DsqlSigner({ hostname, region });
+  const token = await signer.getDbConnectAdminAuthToken();
+
+  tokenExpiry = new Date(Date.now() + 13 * 60 * 1000); // Valid for 15 minutes
+  return token;
+};
+
+const getDatabasePool = async (): Promise<pg.Pool> => {
+  if (pool && tokenExpiry && tokenExpiry > new Date()) {
+    return pool;
+  }
+
+  const token = await getAuthToken();
+
+  pool = new Pool({
+    host: hostname,
+    user: "admin",
+    password: token,
+    database,
+    port: 5432,
+    ssl: { rejectUnauthorized: false },
+  });
+
+  return pool;
+};
+
+export const getDbInstance = async () => {
+  const pool = await getDatabasePool();
+  return drizzle(pool);
+};
+
+export const getDistributions = async () => {
+  const db = await getDbInstance();
+  return db.select().from(postsTable);
+};
+```
+5. Define the Database Schema
+
+Create a schema.ts file in src/db:
+```typescript
+import { integer, varchar, text, timestamp, pgSchema } from "drizzle-orm/pg-core";
+
+export const mySchema = pgSchema("davedennisdotdev_dev");
+export const colors = mySchema.enum("colors", ["red", "green", "blue"]);
+
+export const postsTable = mySchema.table("posts", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  title: varchar({ length: 255 }).notNull(),
+  /* Additional columns can be uncommented and used as needed:
+  slug: varchar({ length: 255 }).notNull().unique(),
+  summary: text().notNull(),
+  content: text().notNull(),
+  coverImage: varchar({ length: 255 }),
+  publishedAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp().defaultNow().notNull(),
+  authorId: integer().notNull(),
+  */
+});
+```
+6. Test the Setup
+
+Create a new .ts file to test database operations. For example:
+```
+import { getDbInstance } from "./src/db";
+
+(async () => {
+  const db = await getDbInstance();
+
+  // Insert a test post
+  await db.insert(postsTable).values({
+    title: "First Post",
+  });
+
+  // Retrieve posts
+  const posts = await db.select().from(postsTable);
+  console.log(posts);
+})();
+```
