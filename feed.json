@@ -12,7 +12,7 @@
     "summary": "AWS DSQL solves a lot of problems that the AWS database ecosystem was facing, and integrating with drizzl makes things even eaiser.",
     "date": "2024-12-01",
     "path": "posts/aurora-dsql-with-drizzle.mdx",
-    "coverImage": "posts/deploy-go-cli-to-npm/cover-image.jpg",
+    "coverImage": "posts/aurora-dsql-with-drizzle/cover-image.png",
     "tags": "blog"
   }
 ]
